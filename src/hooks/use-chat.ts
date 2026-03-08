@@ -21,10 +21,15 @@ function detectEmotion(text: string): EmotionState {
 
 function estimateConfidence(content: string): number {
   const length = content.length;
-  if (length > 800) return 95;
-  if (length > 400) return 85;
-  if (length > 200) return 70;
-  return 50;
+  if (length > 1000) return 10;
+  if (length > 800) return 9;
+  if (length > 600) return 8;
+  if (length > 400) return 7;
+  if (length > 300) return 6;
+  if (length > 200) return 5;
+  if (length > 100) return 4;
+  if (length > 50) return 3;
+  return 2;
 }
 
 export function useChat() {
