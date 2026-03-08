@@ -108,7 +108,7 @@ const Index = () => {
 
         <nav className="space-y-1">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Tools</span>
-          <NavLink to="/resume" icon={<FileText className="h-4 w-4" />} label="Resume Builder" />
+          <SidebarLink to="/resume" icon={<FileText className="h-4 w-4" />} label="Resume Builder" />
         </nav>
 
         <div className="flex-1" />
