@@ -1,13 +1,16 @@
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
+import { Volume2 } from "lucide-react";
 import type { ChatMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 interface Props {
   message: ChatMessage;
+  onSpeak?: () => void;
+  isSpeaking?: boolean;
 }
 
-export function ChatBubble({ message }: Props) {
+export function ChatBubble({ message, onSpeak, isSpeaking }: Props) {
   const isUser = message.role === "user";
 
   return (
@@ -28,9 +31,21 @@ export function ChatBubble({ message }: Props) {
         {isUser ? (
           <p>{message.content}</p>
         ) : (
-          <div className="prose prose-sm max-w-none prose-headings:font-display prose-headings:text-foreground prose-p:text-chat-ai-foreground prose-li:text-chat-ai-foreground prose-strong:text-foreground prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded">
+          <div className="prose prose-sm max-w-none prose-headings:font-display prose-headings:text-foreground prose-p:text-chat-ai-foreground prose-li:text-chat-ai-foreground prose-strong:text-foreground prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-table:text-sm prose-th:bg-muted prose-th:px-3 prose-th:py-1.5 prose-td:px-3 prose-td:py-1.5 prose-td:border-t prose-td:border-border">
             <ReactMarkdown>{message.content}</ReactMarkdown>
           </div>
+        )}
+        {onSpeak && !isUser && message.content.length > 10 && (
+          <button
+            onClick={onSpeak}
+            className={cn(
+              "mt-2 flex items-center gap-1 text-xs transition-colors",
+              isSpeaking ? "text-primary" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Volume2 className="h-3.5 w-3.5" />
+            {isSpeaking ? "Stop" : "Listen"}
+          </button>
         )}
       </div>
     </motion.div>
