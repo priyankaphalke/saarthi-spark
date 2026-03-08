@@ -5,12 +5,14 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 export async function streamChat({
   messages,
   mode,
+  emotionLabel,
   onDelta,
   onDone,
   onError,
 }: {
   messages: ChatMessage[];
   mode: string;
+  emotionLabel?: string;
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (error: string) => void;
@@ -37,7 +39,7 @@ export async function streamChat({
         "Content-Type": "application/json",
         Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
       },
-      body: JSON.stringify({ messages: apiMessages, mode }),
+      body: JSON.stringify({ messages: apiMessages, mode, emotionLabel }),
     });
   } catch {
     onError("Network error. Please check your connection.");
