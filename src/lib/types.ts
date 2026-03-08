@@ -5,6 +5,7 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  imageUrl?: string; // base64 data URL for image messages
 }
 
 export interface EmotionState {
