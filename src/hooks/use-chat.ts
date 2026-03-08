@@ -112,6 +112,7 @@ export function useChat() {
     await streamChat({
       messages: allMessages,
       mode,
+      emotionLabel: detected.label,
       onDelta: (chunk) => {
         assistantBuffer.current += chunk;
         const content = assistantBuffer.current;

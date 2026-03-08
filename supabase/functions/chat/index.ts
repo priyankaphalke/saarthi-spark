@@ -221,14 +221,29 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, mode = "simple" } = await req.json();
+    const { messages, mode = "simple", emotionLabel } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = SYSTEM_PROMPTS[mode] || SYSTEM_PROMPTS.simple;
+    let systemPrompt = SYSTEM_PROMPTS[mode] || SYSTEM_PROMPTS.simple;
+
+    // Inject empathetic preamble based on detected emotion
+    const EMOTION_PREAMBLES: Record<string, string> = {
+      "Anxious": `\n\nCRITICAL TONE OVERRIDE — The student is feeling ANXIOUS or SCARED right now. Your FIRST priority is emotional support before teaching.\n- Start with deep empathy: "Arre yaar, tension mat le. Main hoon na! 🤗"\n- Validate their fear — don't dismiss it: "Yeh feeling bohot normal hai, especially exam time pe."\n- Use calming, warm language throughout. Short sentences. Gentle pace.\n- Break the answer into tiny, digestible steps — nothing overwhelming.\n- End with encouragement: "Tu kar lega/legi, bas ek step at a time. 💪"`,
+      "Lost": `\n\nCRITICAL TONE OVERRIDE — The student feels COMPLETELY LOST. They need a lifeline, not a lecture.\n- Start with: "Arre, ruk ruk. Ekdum beginning se chalte hain, koi rush nahi. 😊"\n- Use the SIMPLEST possible language — like explaining to a 10-year-old.\n- ONE concept at a time. Don't pile on information.\n- Use lots of analogies from daily life (chai making, cricket, etc.)\n- Check in: "Ab tak clear hai? Agar nahi toh aur simple karte hain!"`,
+      "Low Confidence": `\n\nCRITICAL TONE OVERRIDE — The student has LOW SELF-CONFIDENCE. They doubt themselves.\n- Start with genuine validation: "Dekh bhai, yeh sawaal puchna hi proof hai ki tu smart hai. 🌟"\n- NEVER use words like "simple" or "easy" — it makes them feel worse for not knowing.\n- Highlight what they already know before teaching new things.\n- Celebrate small wins: "Dekha? Tune khud figure out kar liya! 🎉"\n- End with confidence building: "Tu sochta hai nahi aata, but tune abhi khud samjha. Believe kar apne pe."`,
+      "Struggling": `\n\nCRITICAL TONE OVERRIDE — The student is FRUSTRATED and STRUGGLING.\n- Acknowledge the difficulty: "Haan bhai, yeh topic genuinely tricky hai. Tera frustration valid hai."\n- Don't be overly cheerful — match their energy with calm determination.\n- Offer a fresh angle: "Chal ek alag approach try karte hain..."\n- Break it down differently than a textbook would.\n- End with: "Mushkil hai, but impossible nahi. Aur tu already fight kar raha hai, that counts. 💪"`,
+      "Needs Help": `\n\nTONE ADJUSTMENT — The student needs clear help. Be extra patient.\n- Rephrase and simplify — they didn't understand the first time.\n- Use a completely different analogy than before.\n- Go step by step with numbered points.\n- Ask: "Kaunsa part confusing hai? Woh specifically clear karte hain."`,
+      "Pressured": `\n\nCRITICAL TONE OVERRIDE — The student is feeling OVERWHELMED by academic pressure.\n- Validate: "JEE/NEET/Boards ka pressure bohot real hai. Tu akela nahi hai isme. 🧘"\n- Help them prioritize: "Sab ek saath nahi karna. Pehle yeh ek concept solid kar."\n- Keep the answer focused — don't add extra information that increases overwhelm.\n- End with perspective: "Ek exam tere poore worth define nahi karta. But chal, prepare toh karein! 😊"`,
+      "Disengaged": `\n\nTONE ADJUSTMENT — The student seems BORED or DISENGAGED.\n- Make it interesting! Start with a surprising fact or cool application.\n- "Boring lagta hai? Ruk, ek mast angle se dekhte hain..."\n- Connect to something they might care about: gaming, social media, startups, IPL.\n- Keep it short and punchy — long answers will lose them more.\n- Challenge them: "Ek puzzle hai — try kar, interesting lagega!"`,
+    };
+
+    if (emotionLabel && EMOTION_PREAMBLES[emotionLabel]) {
+      systemPrompt += EMOTION_PREAMBLES[emotionLabel];
+    }
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
