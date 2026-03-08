@@ -68,6 +68,7 @@ export function useChat() {
   const [emotion, setEmotion] = useState<EmotionState>({ label: "Ready", emoji: "🎯", color: "text-emotion-neutral" });
   const [confidence, setConfidence] = useState(0);
   const [topicsDiscussed, setTopicsDiscussed] = useState<string[]>([]);
+  const [emotionJourney, setEmotionJourney] = useState<EmotionJourneyPoint[]>([]);
   const assistantBuffer = useRef("");
 
   const clearMessages = useCallback(() => {
