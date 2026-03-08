@@ -36,6 +36,13 @@ export function useChat() {
   const [topicsDiscussed, setTopicsDiscussed] = useState<string[]>([]);
   const assistantBuffer = useRef("");
 
+  const clearMessages = useCallback(() => {
+    setMessages([]);
+    setConfidence(0);
+    setTopicsDiscussed([]);
+    setEmotion({ label: "Ready", emoji: "🎯", color: "text-emotion-neutral" });
+  }, []);
+
   const sendMessage = useCallback(async (input: string, imageUrl?: string) => {
     if ((!input.trim() && !imageUrl) || isLoading) return;
 
@@ -87,5 +94,5 @@ export function useChat() {
     });
   }, [messages, mode, isLoading]);
 
-  return { messages, isLoading, mode, setMode, emotion, confidence, topicsDiscussed, sendMessage };
+  return { messages, isLoading, mode, setMode, emotion, confidence, topicsDiscussed, sendMessage, clearMessages };
 }

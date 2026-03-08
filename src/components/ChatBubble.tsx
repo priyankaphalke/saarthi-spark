@@ -1,7 +1,8 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { motion } from "framer-motion";
-import { Volume2, Download, FileText } from "lucide-react";
+import { Volume2, Download, FileText, Copy, Check } from "lucide-react";
+import { useState } from "react";
 import type { ChatMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +16,13 @@ interface Props {
 
 export function ChatBubble({ message, onSpeak, isSpeaking, showExport, onExport }: Props) {
   const isUser = message.role === "user";
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(message.content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <motion.div
@@ -25,10 +33,10 @@ export function ChatBubble({ message, onSpeak, isSpeaking, showExport, onExport 
     >
       <div
         className={cn(
-          "max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed",
+          "rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 text-sm leading-relaxed",
           isUser
-            ? "bg-chat-user text-chat-user-foreground rounded-br-md"
-            : "bg-chat-ai text-chat-ai-foreground rounded-bl-md shadow-card"
+            ? "max-w-[85%] bg-chat-user text-chat-user-foreground rounded-br-md"
+            : "max-w-[95%] sm:max-w-[85%] bg-chat-ai text-chat-ai-foreground rounded-bl-md shadow-card"
         )}
       >
         {isUser && message.imageUrl && (
@@ -41,12 +49,19 @@ export function ChatBubble({ message, onSpeak, isSpeaking, showExport, onExport 
         {isUser ? (
           <p>{message.content}</p>
         ) : (
-          <div className="prose prose-sm max-w-none prose-headings:font-display prose-headings:text-foreground prose-p:text-chat-ai-foreground prose-li:text-chat-ai-foreground prose-strong:text-foreground prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-table:text-sm prose-th:bg-muted prose-th:px-3 prose-th:py-1.5 prose-td:px-3 prose-td:py-1.5 prose-td:border-t prose-td:border-border">
+          <div className="prose prose-sm max-w-none prose-headings:font-display prose-headings:text-foreground prose-p:text-chat-ai-foreground prose-li:text-chat-ai-foreground prose-strong:text-foreground prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-table:text-sm prose-th:bg-muted prose-th:px-3 prose-th:py-1.5 prose-td:px-3 prose-td:py-1.5 prose-td:border-t prose-td:border-border overflow-x-auto">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
           </div>
         )}
         {!isUser && message.content.length > 10 && (
-          <div className="mt-2 flex items-center gap-3">
+          <div className="mt-2 flex flex-wrap items-center gap-2 sm:gap-3">
+            <button
+              onClick={handleCopy}
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {copied ? <Check className="h-3.5 w-3.5 text-confidence-high" /> : <Copy className="h-3.5 w-3.5" />}
+              {copied ? "Copied" : "Copy"}
+            </button>
             {onSpeak && (
               <button
                 onClick={onSpeak}
