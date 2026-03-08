@@ -14,6 +14,12 @@ export interface EmotionState {
   color: string;
 }
 
+export interface EmotionJourneyPoint {
+  emotion: EmotionState;
+  messageIndex: number;
+  timestamp: Date;
+}
+
 export const LEARNING_MODES: Record<LearningMode, { label: string; description: string; icon: string }> = {
   simple: {
     label: "Simple",

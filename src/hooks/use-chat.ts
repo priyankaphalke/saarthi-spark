@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import type { ChatMessage, LearningMode, EmotionState } from "@/lib/types";
+import type { ChatMessage, LearningMode, EmotionState, EmotionJourneyPoint } from "@/lib/types";
 import { streamChat } from "@/lib/chat-api";
 
 function detectEmotion(text: string): EmotionState {
@@ -68,19 +68,26 @@ export function useChat() {
   const [emotion, setEmotion] = useState<EmotionState>({ label: "Ready", emoji: "🎯", color: "text-emotion-neutral" });
   const [confidence, setConfidence] = useState(0);
   const [topicsDiscussed, setTopicsDiscussed] = useState<string[]>([]);
+  const [emotionJourney, setEmotionJourney] = useState<EmotionJourneyPoint[]>([]);
   const assistantBuffer = useRef("");
 
   const clearMessages = useCallback(() => {
     setMessages([]);
     setConfidence(0);
     setTopicsDiscussed([]);
+    setEmotionJourney([]);
     setEmotion({ label: "Ready", emoji: "🎯", color: "text-emotion-neutral" });
   }, []);
 
   const sendMessage = useCallback(async (input: string, imageUrl?: string) => {
     if ((!input.trim() && !imageUrl) || isLoading) return;
 
-    setEmotion(detectEmotion(input));
+    const detected = detectEmotion(input);
+    setEmotion(detected);
+    setEmotionJourney((prev) => [
+      ...prev,
+      { emotion: detected, messageIndex: messages.length, timestamp: new Date() },
+    ]);
 
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
@@ -128,5 +135,5 @@ export function useChat() {
     });
   }, [messages, mode, isLoading]);
 
-  return { messages, isLoading, mode, setMode, emotion, confidence, topicsDiscussed, sendMessage, clearMessages };
+  return { messages, isLoading, mode, setMode, emotion, confidence, topicsDiscussed, emotionJourney, sendMessage, clearMessages };
 }

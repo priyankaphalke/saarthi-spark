@@ -84,7 +84,7 @@ function markdownToHtml(md: string): string {
 }
 
 const Index = () => {
-  const { messages, isLoading, mode, setMode, emotion, confidence, topicsDiscussed, sendMessage, clearMessages } = useChat();
+  const { messages, isLoading, mode, setMode, emotion, confidence, topicsDiscussed, emotionJourney, sendMessage, clearMessages } = useChat();
   const { isListening, transcript, startListening, stopListening } = useVoiceInput();
   const [input, setInput] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -195,7 +195,7 @@ const Index = () => {
 
       <div className="flex-1" />
 
-      <SessionSummary topics={topicsDiscussed} messageCount={messages.length} />
+      <SessionSummary topics={topicsDiscussed} messageCount={messages.length} emotionJourney={emotionJourney} />
     </>
   );
 
