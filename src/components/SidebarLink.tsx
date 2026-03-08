@@ -1,28 +1,29 @@
-import { NavLink as RouterNavLink, NavLinkProps } from "react-router-dom";
-import { forwardRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import type { ReactNode } from "react";
 
-interface NavLinkCompatProps extends Omit<NavLinkProps, "className"> {
-  className?: string;
-  activeClassName?: string;
-  pendingClassName?: string;
+interface Props {
+  to: string;
+  icon: ReactNode;
+  label: string;
 }
 
-const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
-  ({ className, activeClassName, pendingClassName, to, ...props }, ref) => {
-    return (
-      <RouterNavLink
-        ref={ref}
-        to={to}
-        className={({ isActive, isPending }) =>
-          cn(className, isActive && activeClassName, isPending && pendingClassName)
-        }
-        {...props}
-      />
-    );
-  },
-);
+export function SidebarLink({ to, icon, label }: Props) {
+  const { pathname } = useLocation();
+  const active = pathname === to;
 
-NavLink.displayName = "NavLink";
-
-export { NavLink };
+  return (
+    <Link
+      to={to}
+      className={cn(
+        "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+        active
+          ? "bg-primary text-primary-foreground"
+          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+      )}
+    >
+      {icon}
+      {label && <span>{label}</span>}
+    </Link>
+  );
+}
