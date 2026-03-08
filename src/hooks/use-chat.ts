@@ -4,11 +4,17 @@ import { streamChat } from "@/lib/chat-api";
 
 function detectEmotion(text: string): EmotionState {
   const lower = text.toLowerCase();
+  if (lower.includes("confused") || lower.includes("don't understand") || lower.includes("help")) {
+    return { label: "Needs Help", emoji: "🤗", color: "text-emotion-curious" };
+  }
   if (lower.includes("?") || lower.includes("how") || lower.includes("what") || lower.includes("why")) {
     return { label: "Curious", emoji: "🤔", color: "text-emotion-curious" };
   }
-  if (lower.includes("thank") || lower.includes("great") || lower.includes("awesome")) {
+  if (lower.includes("thank") || lower.includes("great") || lower.includes("awesome") || lower.includes("got it")) {
     return { label: "Positive", emoji: "😊", color: "text-emotion-positive" };
+  }
+  if (lower.includes("frustrated") || lower.includes("difficult") || lower.includes("hard")) {
+    return { label: "Struggling", emoji: "💪", color: "text-emotion-curious" };
   }
   return { label: "Focused", emoji: "🧠", color: "text-emotion-neutral" };
 }
@@ -30,16 +36,17 @@ export function useChat() {
   const [topicsDiscussed, setTopicsDiscussed] = useState<string[]>([]);
   const assistantBuffer = useRef("");
 
-  const sendMessage = useCallback(async (input: string) => {
-    if (!input.trim() || isLoading) return;
+  const sendMessage = useCallback(async (input: string, imageUrl?: string) => {
+    if ((!input.trim() && !imageUrl) || isLoading) return;
 
     setEmotion(detectEmotion(input));
 
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
       role: "user",
-      content: input.trim(),
+      content: input.trim() || "Please analyze this image and explain what you see.",
       timestamp: new Date(),
+      imageUrl,
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -48,8 +55,7 @@ export function useChat() {
 
     const allMessages = [...messages, userMsg];
 
-    // Extract topic from first few words
-    const topic = input.trim().split(" ").slice(0, 4).join(" ");
+    const topic = imageUrl ? "📷 Image analysis" : input.trim().split(" ").slice(0, 4).join(" ");
     setTopicsDiscussed((prev) => {
       if (prev.includes(topic)) return prev;
       return [...prev.slice(-9), topic];

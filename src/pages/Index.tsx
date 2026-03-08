@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
+import { Send, Mic, MicOff, Image, Camera, FileText } from "lucide-react";
 import { useChat } from "@/hooks/use-chat";
 import { useVoiceInput, speakText, stopSpeaking } from "@/hooks/use-voice";
 import { ChatBubble } from "@/components/ChatBubble";
 import { LearningModeSelector } from "@/components/LearningModeSelector";
 import { StatusPanel } from "@/components/StatusPanel";
 import { SessionSummary } from "@/components/SessionSummary";
+import { SidebarLink } from "@/components/SidebarLink";
 import { motion } from "framer-motion";
 
 const SUGGESTIONS = [
@@ -15,26 +16,38 @@ const SUGGESTIONS = [
   "What is the Pythagorean theorem?",
 ];
 
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 const Index = () => {
   const { messages, isLoading, mode, setMode, emotion, confidence, topicsDiscussed, sendMessage } = useChat();
   const { isListening, transcript, startListening, stopListening } = useVoiceInput();
   const [input, setInput] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [pendingImage, setPendingImage] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
-  // When voice transcript updates, put it in the input
   useEffect(() => {
     if (transcript) setInput(transcript);
   }, [transcript]);
 
   const handleSend = () => {
-    if (!input.trim()) return;
-    sendMessage(input);
+    if (!input.trim() && !pendingImage) return;
+    sendMessage(input, pendingImage || undefined);
     setInput("");
+    setPendingImage(null);
   };
 
   const handleVoice = () => {
@@ -42,9 +55,7 @@ const Index = () => {
       stopListening();
     } else {
       const ok = startListening();
-      if (!ok) {
-        alert("Speech recognition is not supported in this browser. Please use Chrome or Edge.");
-      }
+      if (!ok) alert("Speech recognition is not supported in this browser. Please use Chrome or Edge.");
     }
   };
 
@@ -56,6 +67,22 @@ const Index = () => {
       speakText(text, () => setIsSpeaking(false));
       setIsSpeaking(true);
     }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Image must be under 10MB.");
+      return;
+    }
+    const base64 = await fileToBase64(file);
+    setPendingImage(base64);
+    e.target.value = "";
   };
 
   return (
@@ -79,6 +106,11 @@ const Index = () => {
 
         <StatusPanel emotion={emotion} confidence={confidence} />
 
+        <nav className="space-y-1">
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Tools</span>
+          <SidebarLink to="/resume" icon={<FileText className="h-4 w-4" />} label="Resume Builder" />
+        </nav>
+
         <div className="flex-1" />
 
         <SessionSummary topics={topicsDiscussed} messageCount={messages.length} />
@@ -94,7 +126,10 @@ const Index = () => {
             </div>
             <span className="font-display font-bold text-foreground">Saarthi AI</span>
           </div>
-          <LearningModeSelector mode={mode} onChange={setMode} />
+          <div className="flex items-center gap-2">
+            <SidebarLink to="/resume" icon={<FileText className="h-4 w-4" />} label="" />
+            <LearningModeSelector mode={mode} onChange={setMode} />
+          </div>
         </header>
 
         {/* Messages */}
@@ -112,10 +147,10 @@ const Index = () => {
                 <h2 className="font-display text-2xl font-bold text-foreground mb-2">
                   Welcome to Saarthi AI
                 </h2>
-                <p className="text-muted-foreground mb-8 max-w-md">
-                  Ask me anything about Computer Science, Mathematics, Physics, Chemistry, Nanotechnology, Engineering, or any subject. I'll explain it step by step!
+                <p className="text-muted-foreground mb-4 max-w-md">
+                  Ask me anything about any subject. I'll explain it step by step! You can also upload images of diagrams, problems, or textbook pages.
                 </p>
-                <div className="flex flex-wrap justify-center gap-2">
+                <div className="flex flex-wrap justify-center gap-2 mb-6">
                   {SUGGESTIONS.map((s) => (
                     <button
                       key={s}
@@ -157,9 +192,24 @@ const Index = () => {
           <StatusPanel emotion={emotion} confidence={confidence} />
         </div>
 
+        {/* Pending image preview */}
+        {pendingImage && (
+          <div className="border-t border-border bg-card px-4 py-2">
+            <div className="mx-auto max-w-2xl flex items-center gap-2">
+              <img src={pendingImage} alt="Upload preview" className="h-16 w-16 rounded-lg object-cover border border-border" />
+              <span className="text-xs text-muted-foreground flex-1">Image attached. Add a question or send directly.</span>
+              <button onClick={() => setPendingImage(null)} className="text-xs text-destructive hover:underline">Remove</button>
+            </div>
+          </div>
+        )}
+
         {/* Input */}
         <div className="border-t border-border bg-card px-4 py-3">
           <div className="mx-auto max-w-2xl flex gap-2">
+            {/* Hidden file inputs */}
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+            <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleImageUpload} />
+
             <button
               onClick={handleVoice}
               className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors ${
@@ -171,17 +221,34 @@ const Index = () => {
             >
               {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
             </button>
+
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"
+              title="Upload image"
+            >
+              <Image className="h-5 w-5" />
+            </button>
+
+            <button
+              onClick={() => cameraInputRef.current?.click()}
+              className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"
+              title="Take photo"
+            >
+              <Camera className="h-5 w-5" />
+            </button>
+
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-              placeholder={isListening ? "Listening..." : "Ask any question..."}
+              placeholder={isListening ? "Listening..." : pendingImage ? "Ask about this image..." : "Ask any question..."}
               disabled={isLoading}
               className="flex-1 rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
             />
             <button
               onClick={handleSend}
-              disabled={isLoading || !input.trim()}
+              disabled={isLoading || (!input.trim() && !pendingImage)}
               className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               <Send className="h-5 w-5" />

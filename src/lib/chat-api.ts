@@ -15,10 +15,19 @@ export async function streamChat({
   onDone: () => void;
   onError: (error: string) => void;
 }) {
-  const apiMessages = messages.map((m) => ({
-    role: m.role,
-    content: m.content,
-  }));
+  // Build API messages, including image content when present
+  const apiMessages = messages.map((m) => {
+    if (m.imageUrl && m.role === "user") {
+      return {
+        role: m.role,
+        content: [
+          { type: "text" as const, text: m.content || "Please analyze this image and explain what you see. Identify the topic and provide a detailed explanation." },
+          { type: "image_url" as const, image_url: { url: m.imageUrl } },
+        ],
+      };
+    }
+    return { role: m.role, content: m.content };
+  });
 
   let resp: Response;
   try {

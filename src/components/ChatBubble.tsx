@@ -28,6 +28,14 @@ export function ChatBubble({ message, onSpeak, isSpeaking }: Props) {
             : "bg-chat-ai text-chat-ai-foreground rounded-bl-md shadow-card"
         )}
       >
+        {/* Show attached image thumbnail for user messages */}
+        {isUser && message.imageUrl && (
+          <img
+            src={message.imageUrl}
+            alt="Uploaded"
+            className="mb-2 max-h-48 rounded-lg object-contain"
+          />
+        )}
         {isUser ? (
           <p>{message.content}</p>
         ) : (
