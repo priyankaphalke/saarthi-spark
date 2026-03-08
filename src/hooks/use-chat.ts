@@ -75,6 +75,7 @@ export function useChat() {
     setMessages([]);
     setConfidence(0);
     setTopicsDiscussed([]);
+    setEmotionJourney([]);
     setEmotion({ label: "Ready", emoji: "🎯", color: "text-emotion-neutral" });
   }, []);
 
