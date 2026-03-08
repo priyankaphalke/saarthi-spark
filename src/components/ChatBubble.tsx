@@ -1,4 +1,5 @@
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { motion } from "framer-motion";
 import { Volume2, Download, FileText } from "lucide-react";
 import type { ChatMessage } from "@/lib/types";
@@ -41,7 +42,7 @@ export function ChatBubble({ message, onSpeak, isSpeaking, showExport, onExport 
           <p>{message.content}</p>
         ) : (
           <div className="prose prose-sm max-w-none prose-headings:font-display prose-headings:text-foreground prose-p:text-chat-ai-foreground prose-li:text-chat-ai-foreground prose-strong:text-foreground prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-table:text-sm prose-th:bg-muted prose-th:px-3 prose-th:py-1.5 prose-td:px-3 prose-td:py-1.5 prose-td:border-t prose-td:border-border">
-            <ReactMarkdown>{message.content}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
           </div>
         )}
         {!isUser && message.content.length > 10 && (
