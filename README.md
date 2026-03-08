@@ -1,73 +1,188 @@
-# Welcome to your Lovable project
+# Saarthi AI 🚀
 
-## Project info
+**Saarthi AI** is an intelligent AI-powered learning companion designed to help students understand concepts clearly and confidently.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Instead of giving generic answers, Saarthi focuses on **structured explanations, visual understanding, and adaptive learning** to improve the student learning experience.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+# 🌟 Problem
 
-**Use Lovable**
+Students often struggle to understand concepts because:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+* explanations are not personalized
+* learning resources are scattered
+* most AI tools provide answers but do not focus on **true understanding**
 
-Changes made via Lovable will be committed automatically to this repo.
+Students frequently feel **confused, frustrated, or stuck**, especially when studying complex topics.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+# 💡 Solution
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Saarthi AI provides an interactive AI learning assistant where students can:
 
-Follow these steps:
+* ask questions in natural language
+* receive structured explanations
+* learn using examples, tables, and visual formats
+* upload images or screenshots for explanation
+* generate assignments and resumes
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Our goal is to transform **confusion into confidence**.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+# ✨ Key Features
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### 🧠 AI Learning Companion
 
-**Edit a file directly in GitHub**
+Provides clear explanations using:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+* step-by-step explanations
+* bullet points
+* comparison tables
+* real-world analogies
 
-**Use GitHub Codespaces**
+---
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 🎓 Assignment Assistant
 
-## What technologies are used for this project?
+Generates answers in **professor-friendly academic format** with:
 
-This project is built with:
+* title
+* introduction
+* explanation
+* conclusion
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+### 📊 Visual Learning Support
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Concepts are explained using:
 
-## Can I connect a custom domain to my Lovable project?
+* tables
+* structured lists
+* comparisons
+* visual formatting
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### 🖼 Image & Screenshot Analysis
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Students can upload:
+
+* screenshots
+* device photos
+* diagrams
+
+Saarthi analyzes the image and explains the content.
+
+---
+
+### 🎤 Voice Interaction
+
+Students can ask questions using **voice input** and receive responses in text.
+
+---
+
+### 📄 Resume Builder
+
+Students can create professional resumes by entering:
+
+* skills
+* education
+* projects
+* experience
+
+The resume can be exported as a **PDF**.
+
+---
+
+### 🧩 Learning Modes
+
+**Simple Mode**
+Easy explanations for beginners.
+
+**Exam Mode**
+Structured answers for exams.
+
+**Interview Mode**
+Deep conceptual explanations.
+
+---
+
+# 🏗 System Architecture
+
+Student Question
+↓
+Saarthi AI Interface
+↓
+AI Processing
+↓
+Structured Explanation
+
+---
+
+# ⚙️ Tech Stack
+
+Frontend
+
+* Lovable AI Website Builder
+
+AI Engine
+
+* Lovable Built-in AI capabilities
+
+Other Technologies
+
+* Markdown rendering
+* Voice recognition
+* Image analysis
+
+---
+
+# 🚀 How to Use
+
+1. Open the Saarthi AI website
+2. Ask any academic question
+3. Upload images or screenshots if needed
+4. Use learning modes for different explanation styles
+5. Generate assignments or resumes
+
+---
+
+# 📌 Example Questions
+
+Explain Binary Search
+Difference between TCP and UDP
+Explain Nanotechnology
+Create a resume for a computer engineering student
+Explain this diagram
+
+---
+
+# 👥 Team
+
+**Team Name:** *TechGyanis*
+
+**Team Members:**
+
+* *Priyanka Phalke* — Frontend Developer & AI Architect
+* *Mahesh Rakte* — Backend Developer
+* *Shreya Ugale* — AI Integration
+* *Rutul Shrivastava* — Research & Documentation
+
+---
+
+# 🎯 Future Improvements
+
+* AI quiz generator
+* Personalized study dashboard
+* Smart study roadmap
+* Learning analytics
+
+---
+
+# 📜 License
+
+This project was developed for **hackathon and educational purposes**.
