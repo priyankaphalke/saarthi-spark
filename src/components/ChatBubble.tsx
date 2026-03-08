@@ -1,6 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
-import { Volume2 } from "lucide-react";
+import { Volume2, Download, FileText } from "lucide-react";
 import type { ChatMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -8,9 +8,11 @@ interface Props {
   message: ChatMessage;
   onSpeak?: () => void;
   isSpeaking?: boolean;
+  showExport?: boolean;
+  onExport?: (content: string, format: "pdf" | "doc") => void;
 }
 
-export function ChatBubble({ message, onSpeak, isSpeaking }: Props) {
+export function ChatBubble({ message, onSpeak, isSpeaking, showExport, onExport }: Props) {
   const isUser = message.role === "user";
 
   return (
@@ -28,7 +30,6 @@ export function ChatBubble({ message, onSpeak, isSpeaking }: Props) {
             : "bg-chat-ai text-chat-ai-foreground rounded-bl-md shadow-card"
         )}
       >
-        {/* Show attached image thumbnail for user messages */}
         {isUser && message.imageUrl && (
           <img
             src={message.imageUrl}
@@ -43,17 +44,39 @@ export function ChatBubble({ message, onSpeak, isSpeaking }: Props) {
             <ReactMarkdown>{message.content}</ReactMarkdown>
           </div>
         )}
-        {onSpeak && !isUser && message.content.length > 10 && (
-          <button
-            onClick={onSpeak}
-            className={cn(
-              "mt-2 flex items-center gap-1 text-xs transition-colors",
-              isSpeaking ? "text-primary" : "text-muted-foreground hover:text-foreground"
+        {!isUser && message.content.length > 10 && (
+          <div className="mt-2 flex items-center gap-3">
+            {onSpeak && (
+              <button
+                onClick={onSpeak}
+                className={cn(
+                  "flex items-center gap-1 text-xs transition-colors",
+                  isSpeaking ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <Volume2 className="h-3.5 w-3.5" />
+                {isSpeaking ? "Stop" : "Listen"}
+              </button>
             )}
-          >
-            <Volume2 className="h-3.5 w-3.5" />
-            {isSpeaking ? "Stop" : "Listen"}
-          </button>
+            {showExport && onExport && (
+              <>
+                <button
+                  onClick={() => onExport(message.content, "pdf")}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  PDF
+                </button>
+                <button
+                  onClick={() => onExport(message.content, "doc")}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <FileText className="h-3.5 w-3.5" />
+                  Word
+                </button>
+              </>
+            )}
+          </div>
         )}
       </div>
     </motion.div>
