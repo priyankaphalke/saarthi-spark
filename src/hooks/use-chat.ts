@@ -82,7 +82,12 @@ export function useChat() {
   const sendMessage = useCallback(async (input: string, imageUrl?: string) => {
     if ((!input.trim() && !imageUrl) || isLoading) return;
 
-    setEmotion(detectEmotion(input));
+    const detected = detectEmotion(input);
+    setEmotion(detected);
+    setEmotionJourney((prev) => [
+      ...prev,
+      { emotion: detected, messageIndex: messages.length, timestamp: new Date() },
+    ]);
 
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
