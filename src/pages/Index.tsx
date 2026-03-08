@@ -195,7 +195,7 @@ const Index = () => {
 
       <div className="flex-1" />
 
-      <SessionSummary topics={topicsDiscussed} messageCount={messages.length} />
+      <SessionSummary topics={topicsDiscussed} messageCount={messages.length} emotionJourney={emotionJourney} />
     </>
   );
 

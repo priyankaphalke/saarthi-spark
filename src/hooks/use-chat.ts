@@ -135,5 +135,5 @@ export function useChat() {
     });
   }, [messages, mode, isLoading]);
 
-  return { messages, isLoading, mode, setMode, emotion, confidence, topicsDiscussed, sendMessage, clearMessages };
+  return { messages, isLoading, mode, setMode, emotion, confidence, topicsDiscussed, emotionJourney, sendMessage, clearMessages };
 }
