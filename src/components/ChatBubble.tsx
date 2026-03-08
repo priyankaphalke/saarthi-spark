@@ -1,4 +1,5 @@
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { motion } from "framer-motion";
 import { Volume2, Download, FileText } from "lucide-react";
 import type { ChatMessage } from "@/lib/types";
