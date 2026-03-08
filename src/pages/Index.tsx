@@ -6,7 +6,7 @@ import { ChatBubble } from "@/components/ChatBubble";
 import { LearningModeSelector } from "@/components/LearningModeSelector";
 import { StatusPanel } from "@/components/StatusPanel";
 import { SessionSummary } from "@/components/SessionSummary";
-import { NavLink } from "@/components/NavLink";
+import { SidebarLink } from "@/components/SidebarLink";
 import { motion } from "framer-motion";
 
 const SUGGESTIONS = [
