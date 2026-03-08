@@ -1,11 +1,11 @@
-export type LearningMode = "simple" | "exam" | "interview";
+export type LearningMode = "simple" | "exam" | "interview" | "assignment";
 
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
-  imageUrl?: string; // base64 data URL for image messages
+  imageUrl?: string;
 }
 
 export interface EmotionState {
@@ -16,18 +16,23 @@ export interface EmotionState {
 
 export const LEARNING_MODES: Record<LearningMode, { label: string; description: string; icon: string }> = {
   simple: {
-    label: "Simple Mode",
+    label: "Simple",
     description: "Beginner-friendly explanations with analogies",
     icon: "💡",
   },
   exam: {
-    label: "Exam Ready",
+    label: "Exam",
     description: "Structured academic answers for exams",
     icon: "📝",
   },
   interview: {
-    label: "Interview Ready",
+    label: "Interview",
     description: "Deep conceptual explanations for interviews",
     icon: "🎯",
+  },
+  assignment: {
+    label: "Assignment",
+    description: "Professor-friendly academic assignment answers",
+    icon: "📄",
   },
 };
