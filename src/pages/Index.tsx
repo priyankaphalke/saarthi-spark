@@ -127,7 +127,7 @@ const Index = () => {
             <span className="font-display font-bold text-foreground">Saarthi AI</span>
           </div>
           <div className="flex items-center gap-2">
-            <NavLink to="/resume" icon={<FileText className="h-4 w-4" />} label="" />
+            <SidebarLink to="/resume" icon={<FileText className="h-4 w-4" />} label="" />
             <LearningModeSelector mode={mode} onChange={setMode} />
           </div>
         </header>
