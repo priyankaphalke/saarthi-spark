@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { Send } from "lucide-react";
+import { Send, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 import { useChat } from "@/hooks/use-chat";
+import { useVoiceInput, speakText, stopSpeaking } from "@/hooks/use-voice";
 import { ChatBubble } from "@/components/ChatBubble";
 import { LearningModeSelector } from "@/components/LearningModeSelector";
 import { StatusPanel } from "@/components/StatusPanel";
@@ -10,23 +11,51 @@ import { motion } from "framer-motion";
 const SUGGESTIONS = [
   "What is nanotechnology?",
   "Explain recursion in programming",
-  "How does quantum computing work?",
+  "Compare TCP vs UDP",
   "What is the Pythagorean theorem?",
 ];
 
 const Index = () => {
   const { messages, isLoading, mode, setMode, emotion, confidence, topicsDiscussed, sendMessage } = useChat();
+  const { isListening, transcript, startListening, stopListening } = useVoiceInput();
   const [input, setInput] = useState("");
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
+  // When voice transcript updates, put it in the input
+  useEffect(() => {
+    if (transcript) setInput(transcript);
+  }, [transcript]);
+
   const handleSend = () => {
     if (!input.trim()) return;
     sendMessage(input);
     setInput("");
+  };
+
+  const handleVoice = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      const ok = startListening();
+      if (!ok) {
+        alert("Speech recognition is not supported in this browser. Please use Chrome or Edge.");
+      }
+    }
+  };
+
+  const handleSpeak = (text: string) => {
+    if (isSpeaking) {
+      stopSpeaking();
+      setIsSpeaking(false);
+    } else {
+      speakText(text, () => setIsSpeaking(false));
+      setIsSpeaking(true);
+    }
   };
 
   return (
@@ -101,7 +130,12 @@ const Index = () => {
             )}
 
             {messages.map((msg) => (
-              <ChatBubble key={msg.id} message={msg} />
+              <ChatBubble
+                key={msg.id}
+                message={msg}
+                onSpeak={msg.role === "assistant" ? () => handleSpeak(msg.content) : undefined}
+                isSpeaking={isSpeaking}
+              />
             ))}
 
             {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
@@ -126,18 +160,29 @@ const Index = () => {
         {/* Input */}
         <div className="border-t border-border bg-card px-4 py-3">
           <div className="mx-auto max-w-2xl flex gap-2">
+            <button
+              onClick={handleVoice}
+              className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                isListening
+                  ? "bg-destructive text-destructive-foreground animate-pulse"
+                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+              }`}
+              title={isListening ? "Stop listening" : "Voice input"}
+            >
+              {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+            </button>
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-              placeholder="Ask any question..."
+              placeholder={isListening ? "Listening..." : "Ask any question..."}
               disabled={isLoading}
               className="flex-1 rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
             />
             <button
               onClick={handleSend}
               disabled={isLoading || !input.trim()}
-              className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               <Send className="h-5 w-5" />
             </button>
