@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import type { ChatMessage, LearningMode, EmotionState } from "@/lib/types";
+import type { ChatMessage, LearningMode, EmotionState, EmotionJourneyPoint } from "@/lib/types";
 import { streamChat } from "@/lib/chat-api";
 
 function detectEmotion(text: string): EmotionState {
