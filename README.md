@@ -166,7 +166,7 @@ Explain this diagram
 
 # 👥 Team
 
-**Team Name:** *TechGyanis*
+**Team Name:** *IdeaForage*
 
 **Team Members:**
 
